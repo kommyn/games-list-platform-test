@@ -22,7 +22,7 @@ export class AuthController {
     const user = req.user as UserRow;
 
     return new Promise((resolve, reject) => {
-      req.logIn(user, (err) => {
+      req.logIn(user, (err: Error) => {
         if (err) reject(err);
         else resolve(user);
       });
@@ -36,14 +36,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     await new Promise((resolve, reject) => {
-      req.logOut((err) => {
+      req.logOut((err: Error) => {
         if (err) reject(err);
         else resolve(req.user);
       });
     });
 
     await new Promise((resolve, reject) => {
-      req.session.destroy((err) => {
+      req.session.destroy((err: Error) => {
         if (err) reject(err);
         else resolve(req.user);
       });

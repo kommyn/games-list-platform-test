@@ -4,7 +4,7 @@ import type { Request } from 'express';
 
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
-  async canActivate(context: ExecutionContext) {
+  canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest<Request>();
     return req.isAuthenticated();
   }

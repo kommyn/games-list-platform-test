@@ -6,9 +6,11 @@ import { AuthController } from './controllers';
 import { AuthService, SessionSerializer } from './services';
 import { LocalStrategy } from './strategies';
 import { User } from '../database/entities';
+import { UsersQueriesService } from 'src/users/services';
 
 @Module({
   imports: [
+    UsersQueriesService,
     TypeOrmModule.forFeature([User]),
     PassportModule.register({ session: true }),
   ],

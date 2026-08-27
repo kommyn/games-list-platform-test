@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule, Inject } from '@nestjs/common';
+import type { RequestHandler } from '@nestjs/common/interfaces';
 import { RouterModule } from '@nestjs/core';
 import type { ConfigType } from '@nestjs/config';
 import passport from 'passport';
@@ -55,7 +56,7 @@ export class AppModule implements NestModule {
           store,
         }),
         passport.initialize(),
-        passport.session(),
+        passport.session() as RequestHandler,
       )
       .forRoutes('*');
   }

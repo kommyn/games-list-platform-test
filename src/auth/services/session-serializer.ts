@@ -1,24 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
-import { User } from '../../database/entities';
+import { UsersQueriesService } from '../../users/services';
+import { UserRow } from '../../users/types';
+
+type Done<T> = (error: Error | null, payload?: T | false) => void;
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
-  ) {
+  constructor(private usersQueriesService: UsersQueriesService) {
     super();
   }
 
-  serializeUser(user: User, done: Function) {
+  serializeUser(user: UserRow, done: Done<string>) {
     done(null, user.id);
   }
 
-  async deserializeUser(id: string, done: Function) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+  async deserializeUser(id: string, done: Done<UserRow>) {
+    const user = await this.usersQueriesService.findOne(id);
 
     done(null, user);
   }

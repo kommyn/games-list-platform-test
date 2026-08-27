@@ -24,19 +24,27 @@ export class UsersQueriesService {
     return usersQb;
   }
 
-  findAll<T extends boolean = false>(params: UsersQueryParams<T> = {}) {
+  findAll<T extends boolean>(params: UsersQueryParams<T> = {}) {
     const usersQb = this.makeUsersQuery(params);
 
     return usersQb.getRawMany<UserQueryResult<T>>();
   }
 
-  findOne<T extends boolean = false>(
-    id: string,
+  findOne<T extends boolean>(id: string, params: UsersQueryParams<T> = {}) {
+    const usersQb = this.makeUsersQuery(params);
+
+    usersQb.andWhere(`users.id = :id`, { id });
+
+    return usersQb.getRawOne<UserQueryResult<T>>();
+  }
+
+  findByEmail<T extends boolean>(
+    email: string,
     params: UsersQueryParams<T> = {},
   ) {
     const usersQb = this.makeUsersQuery(params);
 
-    usersQb.andWhere(`users.id = :id`, { id });
+    usersQb.andWhere(`LOWER(users.email)=LOWER(:email)`, { email });
 
     return usersQb.getRawOne<UserQueryResult<T>>();
   }
