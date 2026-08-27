@@ -7,45 +7,46 @@ import { UserQueryResult, UsersQueryParams } from '../types';
 
 @Injectable()
 export class UsersQueriesService {
-  constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
-  ) {}
+    constructor(
+        @InjectRepository(User) private usersRepository: Repository<User>,
+    ) {}
 
-  private makeUsersQuery({ withPassword = false }: UsersQueryParams<boolean>) {
-    const usersQb = this.usersRepository
-      .createQueryBuilder()
-      .select(['users.id AS id', 'users.email AS email'])
-      .from(User, 'users');
+    private makeUsersQuery({
+        withPassword = false,
+    }: UsersQueryParams<boolean>) {
+        const usersQb = this.usersRepository
+            .createQueryBuilder('users')
+            .select(['users.id AS id', 'users.email AS email']);
 
-    if (withPassword) {
-      usersQb.addSelect('users.password AS password');
+        if (withPassword) {
+            usersQb.addSelect('users.password AS password');
+        }
+
+        return usersQb;
     }
 
-    return usersQb;
-  }
+    findAll<T extends boolean>(params: UsersQueryParams<T> = {}) {
+        const usersQb = this.makeUsersQuery(params);
 
-  findAll<T extends boolean>(params: UsersQueryParams<T> = {}) {
-    const usersQb = this.makeUsersQuery(params);
+        return usersQb.getRawMany<UserQueryResult<T>>();
+    }
 
-    return usersQb.getRawMany<UserQueryResult<T>>();
-  }
+    findOne<T extends boolean>(id: string, params: UsersQueryParams<T> = {}) {
+        const usersQb = this.makeUsersQuery(params);
 
-  findOne<T extends boolean>(id: string, params: UsersQueryParams<T> = {}) {
-    const usersQb = this.makeUsersQuery(params);
+        usersQb.andWhere(`users.id=:id`, { id });
 
-    usersQb.andWhere(`users.id = :id`, { id });
+        return usersQb.getRawOne<UserQueryResult<T>>();
+    }
 
-    return usersQb.getRawOne<UserQueryResult<T>>();
-  }
+    findByEmail<T extends boolean>(
+        email: string,
+        params: UsersQueryParams<T> = {},
+    ) {
+        const usersQb = this.makeUsersQuery(params);
 
-  findByEmail<T extends boolean>(
-    email: string,
-    params: UsersQueryParams<T> = {},
-  ) {
-    const usersQb = this.makeUsersQuery(params);
+        usersQb.andWhere(`LOWER(users.email)=LOWER(:email)`, { email });
 
-    usersQb.andWhere(`LOWER(users.email)=LOWER(:email)`, { email });
-
-    return usersQb.getRawOne<UserQueryResult<T>>();
-  }
+        return usersQb.getRawOne<UserQueryResult<T>>();
+    }
 }

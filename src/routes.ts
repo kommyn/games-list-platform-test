@@ -5,16 +5,16 @@ import { AuthModule } from './auth/auth.module';
 import { GamesModule } from './games/games.module';
 
 export const ROUTES: Routes = [
-  {
-    path: '/auth',
-    module: AuthModule,
-  },
-  {
-    path: '/users',
-    module: UsersModule,
-  },
-  {
-    path: '/games',
-    module: GamesModule,
-  },
+    {
+        path: '/auth',
+        module: AuthModule,
+    },
+    {
+        path: '/users',
+        module: UsersModule,
+    },
+    {
+        path: '/games',
+        module: GamesModule,
+    },
 ];

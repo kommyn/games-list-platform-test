@@ -6,15 +6,15 @@ import { Game } from '../../database/entities';
 
 @Injectable()
 export class GamesService {
-  constructor(
-    @InjectRepository(Game) private gamesRepository: Repository<Game>,
-  ) {}
+    constructor(
+        @InjectRepository(Game) private gamesRepository: Repository<Game>,
+    ) {}
 
-  findAll() {
-    return this.gamesRepository.find();
-  }
+    findAll() {
+        return this.gamesRepository.find();
+    }
 
-  findOne(id: string) {
-    return this.gamesRepository.findOne({ where: { id } });
-  }
+    findOne(id: string) {
+        return this.gamesRepository.findOne({ where: { id } });
+    }
 }

@@ -6,8 +6,8 @@ import { GamesService } from './services';
 import { Game } from '../database/entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Game])],
-  controllers: [GamesController],
-  providers: [GamesService],
+    imports: [TypeOrmModule.forFeature([Game])],
+    controllers: [GamesController],
+    providers: [GamesService],
 })
 export class GamesModule {}

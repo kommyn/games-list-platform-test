@@ -5,16 +5,16 @@ import { SafeUserResponseDto } from '../dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersQueriesService: UsersQueriesService) {}
+    constructor(private usersQueriesService: UsersQueriesService) {}
 
-  findAll(): Promise<SafeUserResponseDto[]> {
-    return this.usersQueriesService.findAll();
-  }
+    findAll(): Promise<SafeUserResponseDto[]> {
+        return this.usersQueriesService.findAll();
+    }
 
-  async findOne(id: string): Promise<SafeUserResponseDto> {
-    const user = await this.usersQueriesService.findOne(id);
-    if (!user) throw new NotFoundException('User does not exist');
+    async findOne(id: string): Promise<SafeUserResponseDto> {
+        const user = await this.usersQueriesService.findOne(id);
+        if (!user) throw new NotFoundException('User does not exist');
 
-    return user;
-  }
+        return user;
+    }
 }

@@ -8,17 +8,17 @@ type Done<T> = (error: Error | null, payload?: T | false) => void;
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  constructor(private usersQueriesService: UsersQueriesService) {
-    super();
-  }
+    constructor(private usersQueriesService: UsersQueriesService) {
+        super();
+    }
 
-  serializeUser(user: UserRow, done: Done<string>) {
-    done(null, user.id);
-  }
+    serializeUser(user: UserRow, done: Done<string>) {
+        done(null, user.id);
+    }
 
-  async deserializeUser(id: string, done: Done<UserRow>) {
-    const user = await this.usersQueriesService.findOne(id);
+    async deserializeUser(id: string, done: Done<UserRow>) {
+        const user = await this.usersQueriesService.findOne(id);
 
-    done(null, user);
-  }
+        done(null, user);
+    }
 }

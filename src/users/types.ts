@@ -1,16 +1,21 @@
 export type UsersQueryParams<T extends boolean> = {
-  withPassword?: T;
+    withPassword?: T;
+};
+
+export type CreateUsersParams = {
+    email: string;
+    password: string;
 };
 
 export type UserRow = {
-  id: string;
-  email: string;
+    id: string;
+    email: string;
 };
 
 export type UserRowWithPassword = UserRow & {
-  password: string;
+    password: string;
 };
 
 export type UserQueryResult<T extends boolean> = T extends true
-  ? UserRowWithPassword
-  : UserRow;
+    ? UserRowWithPassword
+    : UserRow;
