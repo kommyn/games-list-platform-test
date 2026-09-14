@@ -1,98 +1,84 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Games Forum API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend for a forum platform where players discuss video games: a catalogue of games,
+registered users, and (eventually) discussion threads attached to each game.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The project is an early-stage **NestJS 11 + TypeORM + PostgreSQL** REST API. Right now it
+covers the foundation — configuration, database layer, session-based authentication, the
+users and games catalogues, and a reusable pagination toolkit. Discussion threads, posts
+and comments are not implemented yet (see [Roadmap](#roadmap)).
 
-## Description
+## Tech stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Area       | Choice                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------- |
+| Runtime    | Node.js (developed on v22), TypeScript 5.7, CommonJS output                              |
+| Framework  | NestJS 11 (`@nestjs/platform-express`)                                                   |
+| Database   | PostgreSQL via TypeORM (`pg` driver), SQL migrations                                     |
+| Auth       | Passport local strategy + `express-session`, sessions stored in Postgres (`connect-pg-simple`) |
+| Passwords  | bcrypt                                                                                   |
+| Validation | `class-validator` / `class-transformer` (global `ValidationPipe`), Joi for env vars       |
+| Tooling    | ESLint 9 + Prettier, Jest (configured, no tests written yet), Yarn                       |
 
-## Project setup
+## Getting started
 
-```bash
-$ yarn install
-```
+### Requirements
 
-## Compile and run the project
+- Node.js 20+ (developed on 22)
+- Yarn
+- PostgreSQL with the `uuid-ossp` extension available (migrations call `uuid_generate_v4()`)
+
+### Setup
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+yarn install
 ```
 
-## Run tests
+Create a `.env` file in the project root. Every variable is required and validated by Joi at
+startup, so the app refuses to boot if one is missing:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_DATABASE=games_forum
+
+SESSION_SECRET=some_long_random_string
+```
+
+Apply the migrations, then start the API:
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+yarn migration:run
+yarn start:dev
 ```
 
-## Deployment
+The server listens on `PORT` or `3000`.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Scripts
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Script                                     | Purpose                                     |
+| ------------------------------------------ | ------------------------------------------- |
+| `yarn start` / `start:dev` / `start:debug` | Run the app (plain / watch / debug modes)   |
+| `yarn start:prod`                          | Run the compiled build (`dist/src/main`)    |
+| `yarn build`                               | `nest build`                                |
+| `yarn lint`                                | ESLint with `--fix`                         |
+| `yarn prettier`                            | Format `src/**/*.ts`                        |
+| `yarn migration:generate`                  | Generate a migration from entity changes    |
+| `yarn migration:run`                       | Apply pending migrations                    |
+| `yarn migration:revert`                    | Roll back the last migration                |
+| `yarn migration:show`                      | List migration status                       |
 
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
+Migrations are driven by `typeorm.config.ts` (a standalone `DataSource`), while the running
+app builds its options from `TypeOrmConfigService`. `synchronize` is off everywhere — schema
+changes always go through a migration.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Roadmap
 
-## Resources
+The forum half of the platform is still ahead:
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- Threads/topics per game, posts and replies, likes and moderation
+- User profiles beyond `id` / `email`, roles and permissions
+- Swagger/OpenAPI documentation via the pagination response decorators
+- Tests

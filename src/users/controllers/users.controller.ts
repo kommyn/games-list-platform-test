@@ -3,11 +3,13 @@ import {
     Get,
     Param,
     ParseUUIDPipe,
+    Query,
     UseGuards,
 } from '@nestjs/common';
 
 import { UsersService } from '../services';
 import { AuthenticatedGuard } from '../../auth/guards';
+import { CursorOptionsDto } from '../../shared/pagination/cursor';
 
 @Controller()
 export class UsersController {
@@ -15,8 +17,8 @@ export class UsersController {
 
     @Get()
     @UseGuards(AuthenticatedGuard)
-    getUsers() {
-        return this.usersService.findAll();
+    getUsers(@Query() cursorOptionsDto: CursorOptionsDto) {
+        return this.usersService.findAll(cursorOptionsDto);
     }
 
     @Get(':id')

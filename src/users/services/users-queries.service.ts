@@ -11,12 +11,14 @@ export class UsersQueriesService {
         @InjectRepository(User) private usersRepository: Repository<User>,
     ) {}
 
-    private makeUsersQuery({
-        withPassword = false,
-    }: UsersQueryParams<boolean>) {
+    makeUsersQuery({ withPassword = false }: UsersQueryParams<boolean>) {
         const usersQb = this.usersRepository
             .createQueryBuilder('users')
-            .select(['users.id AS id', 'users.email AS email']);
+            .select([
+                'users.id AS id',
+                'users.email AS email',
+                'users."createdAt" AS "createdAt"',
+            ]);
 
         if (withPassword) {
             usersQb.addSelect('users.password AS password');
