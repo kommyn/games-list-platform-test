@@ -11,8 +11,8 @@ class Game {
     @Column()
     description!: string;
 
-    @Column({ type: 'timestamptz' })
-    createdAt!: string;
+    @Column({ type: 'timestamptz', precision: 3 })
+    createdAt!: Date;
 }
 
 export default Game;

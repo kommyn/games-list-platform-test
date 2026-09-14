@@ -7,14 +7,14 @@ import { validationSchema } from './validation-schema';
 import * as config from './config';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [...Object.values(config)],
-      validationSchema,
-      validationOptions: { abortEarly: true },
-    }),
-    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-  ],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [...Object.values(config)],
+            validationSchema,
+            validationOptions: { abortEarly: true },
+        }),
+        TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+    ],
 })
 export class SharedModule {}

@@ -10,6 +10,7 @@ export type CreateUsersParams = {
 export type UserRow = {
     id: string;
     email: string;
+    createdAt: Date;
 };
 
 export type UserRowWithPassword = UserRow & {
